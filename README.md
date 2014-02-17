@@ -6,3 +6,4 @@ Workspace on Computer science center statistics (year 2014)
 week1
 =====
 Descripative statistics
+Hometask: http://rpubs.com/danilchenko-andrey/13394
