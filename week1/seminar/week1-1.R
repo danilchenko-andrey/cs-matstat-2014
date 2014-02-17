@@ -1,6 +1,6 @@
-n <- 100
+n <- 1000
 data <- rnorm(n)
-data1 <- rexp(n)
+#data1 <- rexp(n)
 
 hist(data, col=rgb(0,1,1,1))
 boxplot(data)
@@ -10,7 +10,7 @@ beginMoment <- function(data, r) {
 }
 
 centralMoment <- function(data, r) {
-  mean((data-mean(data))**2)
+  mean((data-mean(data))**r)
 }
 
 min(data)
@@ -31,18 +31,21 @@ s
 var(data)
 sd(data)
 
-mu3 <- centralMoment(data, 3)
-#skew
-mu3 / s**3
 skew <- function(data) {
   s2 <- centralMoment(data, 2)
   s <- sqrt(s2)
   centralMoment(data, 3) / s**3
 }
 
+#skew
+skew(data)
+
 # kurtosis
 mu4 <- centralMoment(data, 4)
 (mu4 / s**4) - 3
 
 #коэф. вариации
-s/mean(data)d
+var.coef <- function(data) {
+  100*sqrt(centralMoment(data, 2))/mean(data)
+}
+var.coef(data)
