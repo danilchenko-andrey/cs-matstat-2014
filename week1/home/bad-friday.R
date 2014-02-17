@@ -1,4 +1,6 @@
-download.file(url='http://beta.compscicenter.ru/media/homework_supplement/82/13_6', destfile='data/week1-home.tsv')
+setwd('~/workspace/cs-matstat/')
+
+#download.file(url='http://beta.compscicenter.ru/media/homework_supplement/82/13_6', destfile='data/week1-home.tsv')
 
 read.csv('data/week1-home.tsv', sep='\t', header=F) -> bad.friday
 names(bad.friday) <- c('shopping.type', 'date', 'customers.6', 'customers.13', 'shop')
