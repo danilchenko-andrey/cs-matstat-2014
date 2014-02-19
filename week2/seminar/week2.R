@@ -51,8 +51,8 @@ plot.dnorms <- function(data, n) {
 op <- par(mfrow=c(1,2))
 plot.dnorms(data.10, '10')
 plot.dnorms(data.30, '30')
-#plot.dnorms(data.c, data.nc, '1000')
 par(op)
+plot.dnorms(data.1000, '1000')
 
 #========================
 # task 2
@@ -90,7 +90,7 @@ mean(data, trim=0.1)
 # median does better
 # and trimmed means are pretty good
 
-# let's see distibution of means got from same samples
+# let's see distibution of statistics got from same sample sizes
 generate.funs <- function(n1, n2, k=1000, mean1=1, mean2=50, sd1=0.5, sd2=5) {
   data <- sapply(1:k, FUN=function(n) {
     data <- append(rnorm(n1, mean=mean1, sd=0.5), rnorm(n2, mean=100, sd=10))
