@@ -89,3 +89,17 @@ mean(data, trim=0.1)
 # so we see that mean is not doing well with outliers
 # median does better
 # and trimmed means are pretty good
+
+# let's see distibution of means got from same samples
+generate.funs <- function(n1, n2, k=1000, mean1=1, mean2=50, sd1=0.5, sd2=5) {
+  data <- sapply(1:k, FUN=function(n) {
+    data <- append(rnorm(n1, mean=mean1, sd=0.5), rnorm(n2, mean=100, sd=10))
+    cbind(mean(data), median(data), mean(data, trim=0.01), mean(data, trim=0.1))
+  })
+  data <- as.data.frame(t(data))
+  names(data) <- c('mean','median', 'mean-0.01', 'mean-0.1')
+  data
+}
+data <- generate.funs(1000, 10, 100)
+boxplot(data)
+# and we see that again mean is going to do worse than median and trimmed means
