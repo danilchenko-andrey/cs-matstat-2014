@@ -8,6 +8,6 @@ week1
 Descripative statistics
 Hometask: http://rpubs.com/danilchenko-andrey/13394
 
-week1
+week2
 =====
 Seminar: http://rpubs.com/danilchenko-andrey/13473
