@@ -73,3 +73,19 @@ plot.boxplots(data.10, '10')
 plot.boxplots(data.30, '30')
 par(op)
 plot.boxplots(data.1000, '1000')
+# and so we see smaller range for mean than for medians
+
+
+#========================
+# task 3
+
+data.1 <- rnorm(1000, mean=1, sd=0.5)
+data.2 <- rnorm(10, mean=100, sd=10)
+data <- append(data.1, data.2)
+mean(data)
+median(data)
+mean(data, trim=0.01)
+mean(data, trim=0.1)
+# so we see that mean is not doing well with outliers
+# median does better
+# and trimmed means are pretty good
