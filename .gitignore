@@ -3,3 +3,5 @@ data/
 .RHistory
 .Rproj.user/
 .Rproj.user
+*.pdf
+lectures/
