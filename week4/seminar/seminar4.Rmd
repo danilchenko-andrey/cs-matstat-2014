@@ -7,10 +7,10 @@
 ```{r}
 n <- 50
 k <- 1000
-mus <- c(2, 4)
-sds <- c(1, 3)
+mus <- c(2, 3)
+sds <- c(1, 2)
 
-cor <- matrix(c(1, -0.6, -0.6, 1), nrow = 2)
+cor <- matrix(c(1, 0.6, 0.6, 1), nrow = 2)
 print(cor)
 
 generate.paired <- function(n, mus, sds, cor) {
@@ -57,7 +57,115 @@ head(cbind(p.paired, p.unpaired))
 
 Мощность независимого теста: `r sum(p.unpaired < 0.05)/k` (из `r k` раз `r sum(p.unpaired > 0.05)` раз приняли неверную $H_0$).
 
+Как и ожидалось, получили, что парный тест в подобной ситуации более мощный.
 
-Задание 2.
-----------
-??
+Задание 2. ANOVA
+----------------
+Cоздадим группы, одна из которых смещена
+```{r}
+n <- 50
+
+sample1 <- rnorm(n, 0, 1)
+sample2 <- rnorm(n, 0, 1)
+sample3 <- rnorm(n, 1, 1)
+```
+Объединим группы в один датасет
+```{r}
+sample <- c(sample1, sample2, sample3)
+group <- rep(c('a','b','c'), rep(n,3))
+data <- data.frame(sample, factor=group)
+```
+Запустим однофакторный дисперсионный анализ
+```{r}
+result <- aov(sample~factor,data)
+summary(result)
+```
+Получили, что P(>F) << 0.05 — значит, что в наших группах есть различия (что действительно так).
+
+Создадим новые группы, в которых нет различий
+```{r}
+sample1 <- rnorm(n, 0, 1)
+sample2 <- rnorm(n, 0, 1)
+sample3 <- rnorm(n, 0, 1)
+```
+```{r}
+sample <- c(sample1, sample2, sample3)
+group <- rep(c('a','b','c'), rep(n,3))
+data <- data.frame(sample, factor=group)
+```
+Запустим однофакторный дисперсионный анализ
+```{r}
+result <- aov(sample~factor,data)
+summary(result)
+```
+Получили, что P(>F) > 0.05 — значит, что в наших группах нет различий.
+
+
+Задание 3. Непараметрические критерии
+-------------------------------------
+Создадим выборки как смести нормального и равномерного распределений. К примеру, они могут выглядеть так:
+```{r}
+n1 <- 20
+n2 <- 10
+k <- 1000
+
+sample1 <- append(rnorm(n1,4,2),runif(n2,2,4))
+sample2 <- append(rnorm(n1,5,2), runif(n2,5,7))
+
+hist(sample2, col=rgb(1,0,0,0.3), probability=T, ylim=c(0,0.5), main='Samples')
+hist(sample1, col=rgb(0,1,0,0.3), probability=T, add=T)
+abline(v=mean(sample2), col='red', lty=5)
+abline(v=mean(sample1), col='green', lty=5)
+abline(v=median(sample2), col='red', lwd=2)
+abline(v=median(sample1), col='green', lwd=2)
+legend('topright', c('1', '2'), col=c('green', 'red'), pch=15)
+```
+Смоделируем подобные выборки `r k` раз и запустим тесты Манна-Уитни и Стьюдента:
+```{r}
+ps <- sapply(1:k, FUN=function(k) {
+  sample1 <- append(rnorm(n1,4,2),runif(n2,2,4))
+  sample2 <- append(rnorm(n1,5,2), runif(n2,5,7))
+  p.w <- wilcox.test(sample1, sample2)$p.value
+  p.t <- t.test(sample1, sample2)$p.value
+  cbind(p.w, p.t)
+})
+```
+
+Мощность теста Манна-Уитни: `r sum(ps[1,] < 0.05)/k` (из `r k` раз `r sum(ps[1,] > 0.05)` раз приняли неверную $H_0$).
+
+Мощность теста Стьюдента: `r sum(ps[2,] < 0.05)/k` (из `r k` раз `r sum(ps[2,] > 0.05)` раз приняли неверную $H_0$).
+
+Теперь смоделируем гораздо более не нормальные выборки.
+Например: 
+```{r}
+n1 <- 20
+n2 <- 10
+k <- 1000
+
+sample1 <- append(rnorm(n2,5,2), runif(n1,4.8,4.9))
+sample2 <- append(rnorm(n2,5.1,2), runif(n1,5.2,5.3))
+
+hist(sample2, col=rgb(1,0,0,0.3), probability=T, ylim=c(0,1), main='Samples')
+hist(sample1, col=rgb(0,1,0,0.3), probability=T, add=T)
+abline(v=mean(sample2), col='red', lty=5)
+abline(v=mean(sample1), col='green', lty=5)
+abline(v=median(sample2), col='red', lwd=2)
+abline(v=median(sample1), col='green', lwd=2)
+legend('topright', c('1', '2'), col=c('green', 'red'), pch=13)
+```
+Смоделируем подобные выборки `r k` раз и запустим тесты Манна-Уитни и Стьюдента:
+```{r}
+ps <- sapply(1:k, FUN=function(k) {
+  sample1 <- append(rnorm(n2,5,2),runif(n1,4.8,4.9))
+  sample2 <- append(rnorm(n2,5.1,2),runif(n1,5.2,5.3))
+  p.w <- wilcox.test(sample1, sample2)$p.value
+  p.t <- t.test(sample1, sample2)$p.value
+  cbind(p.w, p.t)
+})
+```
+
+Мощность теста Манна-Уитни: `r sum(ps[1,] < 0.05)/k` (из `r k` раз `r sum(ps[1,] > 0.05)` раз приняли неверную $H_0$).
+
+Мощность теста Стьюдента: `r sum(ps[2,] < 0.05)/k` (из `r k` раз `r sum(ps[2,] > 0.05)` раз приняли неверную $H_0$).
+
+Тест Стьюдента (как и ожидалось) дает гораздо более низкую мощность — нарушено одно из его предположений.
