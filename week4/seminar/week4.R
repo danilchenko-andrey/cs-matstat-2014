@@ -1,4 +1,5 @@
-# Task 1: paired and independed test
+# Task 1: paired and independed t-test
+
 
 cor <- 0.6
 

@@ -1,0 +1,63 @@
+Критерии однородности (параметрические и непараметрические)
+==========================================================
+Задание 1: Парный T-test
+------------------------
+
+Сперва смоделируем связанные выборки...
+```{r}
+n <- 50
+k <- 1000
+mus <- c(2, 4)
+sds <- c(1, 3)
+
+cor <- matrix(c(1, -0.6, -0.6, 1), nrow = 2)
+print(cor)
+
+generate.paired <- function(n, mus, sds, cor) {
+  X0 <- rnorm(n)
+  Y0 <- rnorm(n)
+  K <- cor * (sds %*% t(sds))
+  A <- chol(K)
+  
+  X <- c()
+  Y <- c()
+  for (t in 1:n) {
+      hh <- t(A) %*% c(X0[t], Y0[t])
+      X[t] <- hh[1] + mus[1]
+      Y[t] <- hh[2] + mus[2]
+  }
+  #plot(X, Y, col = "blue")
+  data.frame('X'=X, 'Y'=Y)
+}
+```
+
+Теперь `r k` раз смоделируем выборки и посчитаем парный и независимый тесты Стьюдента:
+```{r}
+sapply(1:k, FUN=function(i) {
+  data <- generate.paired(n, mus, sds, cor)
+  X <- data$X
+  Y <- data$Y
+  p.paired <- t.test(X, Y, paired=T, var.equal=F)$p.value
+  p.unpaired <- t.test(X, Y, paired=F, var.equal=F)$p.value
+  cbind(p.paired, p.unpaired)
+}) -> ps
+
+p.paired <- ps[1,]
+p.unpaired <- ps[2,]
+```
+
+Пример полученных p-value...
+```{r}
+head(cbind(p.paired, p.unpaired))
+```
+
+Итого: `r sum(p.paired < p.unpaired)` раз p-value парного теста было меньше p-value независимого.
+
+Мощность парного теста: `r sum(p.paired < 0.05)/k` (из `r k` раз `r sum(p.paired > 0.05)` раз приняли неверную $H_0$).
+
+Мощность независимого теста: `r sum(p.unpaired < 0.05)/k` (из `r k` раз `r sum(p.unpaired > 0.05)` раз приняли неверную $H_0$).
+
+
+Задание 2.
+----------
+??
