@@ -18,3 +18,7 @@ Seminar: http://rpubs.com/danilchenko-andrey/14288
 week 5
 ------
 Seminar: http://rpubs.com/danilchenko-andrey/14429
+
+week 6
+------
+Seminar: http://rpubs.com/danilchenko-andrey/14502
